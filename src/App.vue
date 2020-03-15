@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-<router-link to="/home"></router-link>
+ <!-- 一级路由容器 -->
     <router-view/>
   </div>
 </template>

@@ -1,14 +1,15 @@
 <template>
   <div class='container'>
-      我是主页
+       <van-nav-bar title="小智同学" left-arrow @click-left="$router.back()"></van-nav-bar>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'home' // devtools查看组件时  可以看到 对应的name名称
+  name: 'chat'
 }
 </script>
 
 <style>
+
 </style>

@@ -5,6 +5,7 @@ import store from './store'
 import Vant from 'vant' // 引入vant组件库
 import 'vant/lib/index.css' // 引入vant组件的样式
 import 'amfe-flexible'
+import '@/permission'// 引入路由导航守卫
 import '@/styles/index.less' // 引入全局的自定义样式  因为要覆盖vant的样式
 Vue.use(Vant) // 注册Vant的所有组件 一旦注册任意位置都可以使用vant的组件 相当于调用了vant的install方法吧
 // 以上做法是完整导入的模式

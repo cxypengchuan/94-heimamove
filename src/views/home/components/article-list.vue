@@ -94,13 +94,33 @@ export default {
         this.finished = true
       }
     },
-    onRefresh () {
-      setTimeout(() => {
-        const arr = Array.from(Array(2), (value, index) => '追加' + (index + 1))
-        this.articles.unshift(...arr)
-        this.downLoading = false
-        this.successText = `刷新了${arr.length}条数据`
-      }, 1000)
+    async onRefresh () {
+      // setTimeout(() => {
+      //   const arr = Array.from(Array(2), (value, index) => '追加' + (index + 1))
+      //   this.articles.unshift(...arr)
+      //   this.downLoading = false
+      //   this.successText = `刷新了${arr.length}条数据`
+      // }, 1000)
+      const data = await getArticle({
+        channel_id: this.channels_id,
+        timestamp: Date.now()
+      })
+      this.downLoading = false// 手动关闭下拉刷新的状态
+      // 还需要判断最新的时间戳是否请求到数据
+      if (data.results.length) {
+        // 请求到的内容覆盖文章列表
+        this.articles = data.results
+
+        if (data.pre_timestamp) {
+          // 因为下拉刷新 换来了一拨新的数据 里面 又有历史时间戳
+          this.finished = false // 重新唤醒列表 让列表可以继续上拉加载
+          this.timestamp = data.pre_timestamp // 记录历史时间戳给变量
+        }
+        // 刷新成功后的提示信息,刷新了多少条数据
+        this.successText = `更新了${data.results.length}条数据`
+      } else {
+        this.successText = '当前数据已是最新'
+      }
     }
 
   }

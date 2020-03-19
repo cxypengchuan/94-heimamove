@@ -5,27 +5,27 @@
     <van-pull-refresh v-model="downLoading" @refresh="onRefresh" :success-text="successText">
     <van-list finished-text="没有了" v-model="upLoading" :finished="finished" @load="onLoad">
         <van-cell-group>
-          <van-cell v-for="item in articles" :key="item">
+          <van-cell v-for="item in articles" :key="item.art_id.toString()">
             <!-- 放置元素 文章列表的循环项  无图  单图  三图 -->
             <div class="article_item">
               <!-- 标题 -->
-              <h3 class="van-ellipsis">2020年,真的是世纪大变革,世界进程发生巨变的一年</h3>
+              <h3 class="van-ellipsis">{{ item.title }}</h3>
               <!-- 三图图片 -->
-              <div class="img_box">
+              <div class="img_box" v-if="item.cover.type === 3">
                 <!-- 图片组件用的是 vant的组件库中的图片组件 需要使用该组件 进行图片的懒加载 -->
-                <van-image class="w33" fit="cover" src="https://img.yzcdn.cn/vant/cat.jpeg" />
-                <van-image class="w33" fit="cover" src="https://img.yzcdn.cn/vant/cat.jpeg" />
-                <van-image class="w33" fit="cover" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+                <van-image class="w33" fit="cover" :src="item.cover.images[0]" />
+                <van-image class="w33" fit="cover" :src="item.cover.images[1]" />
+                <van-image class="w33" fit="cover" :src="item.cover.images[2]" />
               </div>
               <!-- 单图 暂时隐藏掉单图-->
-               <!-- <div class="img_box">
-                <van-image class="w100" fit="cover" src="https://img.yzcdn.cn/vant/cat.jpeg" />
-              </div> -->
+               <div class="img_box" v-if="item.cover.type === 1">
+                <van-image class="w100" fit="cover" :src="item.cover.images[0]" />
+              </div>
               <!-- 作者信息 -->
               <div class="info_box">
-                <span>你像一阵风</span>
-                <span>8评论</span>
-                <span>10分钟前</span>
+                <span>{{ item.aut_name }}</span>
+                <span>{{ item.comm_count }}</span>
+                <span>{{ item.pubdate }}</span>
                 <span class="close">
                   <van-icon name="cross"></van-icon>
                 </span>
@@ -39,6 +39,7 @@
 </template>
 
 <script>
+import { getArticle } from '@/api/article'
 export default {
   data () {
     return {
@@ -46,24 +47,51 @@ export default {
       downLoading: false, // 下载刷新状态 表示是否正在下拉刷新
       upLoading: false, // 表示是否开启了上拉加载 默认值false
       finished: false, // 表示 是否已经完成所有数据的加载
-      articles: [] // 文章列表
+      articles: [], // 文章列表
+      timestamp: null
+    }
+  },
+  props: {
+    channels_id: {
+      required: true, // 必填项
+      type: Number, // 表示要传入props属性的类型
+      default: null// 默认值
     }
   },
   methods: {
-    onLoad () {
-      // 如果你有数据 你应该 把数据到加到list中
-      if (this.articles.length > 50) {
-        this.finished = true // 表示 数据已经全部加载完毕 没有数据了
+    async onLoad () {
+      // // 如果你有数据 你应该 把数据到加到list中
+      // if (this.articles.length > 50) {
+      //   this.finished = true // 表示 数据已经全部加载完毕 没有数据了
+      // } else {
+      //   // 往组件里加载数据
+      //   const arr = Array.from(
+      //     Array(15),
+      //     (value, index) => this.articles.length + index + 1
+      //   )
+      //   // 上拉加载 不是覆盖之前的数据  应该把数据追加到数组的队尾
+      //   this.articles.push(...arr)
+      //   // 添加完数据 需要手动的关掉 loading
+      //   this.upLoading = false
+      // }
+      // 文章列表真实数据的请求,请求需要传入两个参数
+      const data = await getArticle({
+        // this.timestamp || Date.now()  如果有历史时间戳 用历史时间戳 否则用当前的时间戳
+        channel_id: this.channels_id, timestamp: this.timestamp || Date.now()
+      })
+      // 把请求到的数据添加到文章列表里
+      this.articles.push(...data.results)
+      // 关闭加载状态
+      this.upLoading = false
+      // 还要判断是否有历史时间戳,
+      // 将历史时间戳 给timestamp  但是 赋值之前有个判断 需要判断一个历史时间是否为0
+      // 如果历史时间戳为 0 说明 此时已经没有数据了 应该宣布 结束   finished true
+      if (data.pre_timestamp) {
+        // 如果有历史时间戳 表示 还有数据可以继续进行加载
+        this.timestamp = data.pre_timestamp
       } else {
-        // 往组件里加载数据
-        const arr = Array.from(
-          Array(15),
-          (value, index) => this.articles.length + index + 1
-        )
-        // 上拉加载 不是覆盖之前的数据  应该把数据追加到数组的队尾
-        this.articles.push(...arr)
-        // 添加完数据 需要手动的关掉 loading
-        this.upLoading = false
+        // 表示没有数据可以请求了
+        this.finished = true
       }
     },
     onRefresh () {

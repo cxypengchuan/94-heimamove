@@ -4,7 +4,7 @@
       <van-tabs>
          <!-- 内部需要放置子 标签  title值为当前显示的内容-->
          <!-- van-tab是vant组件的样式  -->
-         <van-tab :title="`标签${item}`" v-for="item in 10" :key="item">
+         <van-tab :title="item.name" v-for="item in channels" :key="item.id">
            <!-- 单元格 -->
            <!-- <van-cell-group>
                 <van-cell title="标题" value="内容" :key="item" v-for="item in 20"></van-cell>
@@ -23,11 +23,28 @@
 
 <script>
 import ArticleList from '@/views/home/components/article-list'
+import { getChannels } from '@/api/channels'
 export default {
   name: 'home', // devtools查看组件时  可以看到 对应的name名称
   components: {
     ArticleList
+  },
+  data () {
+    return {
+      channels: {}
+    }
+  },
+  methods: {
+    async getMychannels () {
+      const data = await getChannels()
+      this.channels = data.channels
+    }
+  },
+  created () {
+    // 直接获取频道数据
+    this.getMychannels()
   }
+
 }
 </script>
 

@@ -2,7 +2,7 @@
 
   <div class="scroll-wrapper">
 
-    <!-- <van-pull-refresh v-model="downLoading" @refresh="onRefresh" :success-text="successText"> -->
+    <van-pull-refresh v-model="downLoading" @refresh="onRefresh" :success-text="successText">
     <van-list finished-text="没有了" v-model="upLoading" :finished="finished" @load="onLoad">
         <van-cell-group>
           <van-cell v-for="item in articles" :key="item">
@@ -34,6 +34,7 @@
           </van-cell>
         </van-cell-group>
     </van-list>
+    </van-pull-refresh>
   </div>
 </template>
 
@@ -64,6 +65,14 @@ export default {
         // 添加完数据 需要手动的关掉 loading
         this.upLoading = false
       }
+    },
+    onRefresh () {
+      setTimeout(() => {
+        const arr = Array.from(Array(2), (value, index) => '追加' + (index + 1))
+        this.articles.unshift(...arr)
+        this.downLoading = false
+        this.successText = `刷新了${arr.length}条数据`
+      }, 1000)
     }
 
   }

@@ -20,12 +20,13 @@
       </span>
      <!-- 放置弹层组件 -->
          <van-popup :style="{ width: '80%' }" v-model="showMoreAction">
-      <MoreAction />
+      <MoreAction @dislike='dislike'  />
          </van-popup>
   </div>
 </template>
 
 <script>
+import { dislikeArticle } from '@/api/article'
 import MoreAction from '@/views/home/components/more-action'
 import ArticleList from '@/views/home/components/article-list'
 import { getChannels } from '@/api/channels'
@@ -38,14 +39,37 @@ export default {
   data () {
     return {
       channels: {},
-      showMoreAction: false
-
+      showMoreAction: false, // 弹层显示
+      articleId: null // 用来接收 点击的文章的id
     }
   },
   methods: {
+    // 不敢兴趣
+    async dislike () {
+      try {
+        await dislikeArticle({
+          target: this.articleId
+        })
+        this.$notify({
+          type: 'success',
+          message: '操作成功'
+        })
+        // this.showMoreAction = true
+      } catch (error) {
+        this.$notify({
+
+          message: '操作失败'
+
+        })
+      }
+    },
+
     // 触发弹层事件
-    openAction () {
+    openAction (artid) {
       this.showMoreAction = true
+      // 把点击的文章列表的id保存下来
+      this.articleId = artid
+      // alert(artid)
     },
     async getMychannels () {
       const data = await getChannels()

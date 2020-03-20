@@ -26,7 +26,7 @@
                 <span>{{ item.aut_name }}</span>
                 <span>{{ item.comm_count }}</span>
                 <span>{{ item.pubdate | relTime }}</span>
-                <span @click="$emit('showAction')" class="close" v-if="$store.state.user.token">
+                <span @click="$emit('showAction', item.art_id.toString())" class="close" v-if="$store.state.user.token">
                   <van-icon name="cross" ></van-icon>
                 </span>
               </div>

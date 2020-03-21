@@ -20,13 +20,14 @@
       </span>
      <!-- 放置弹层组件 -->
          <van-popup :style="{ width: '80%' }" v-model="showMoreAction">
-      <MoreAction @dislike='dislike'  />
+           <!-- $event在H5中是事件对象,在自定义事件中是事件传出的第一个参数 -->
+      <MoreAction @dislike="dislikeOrReport('dislike')" @report="dislikeOrReport('report',$event)" />
          </van-popup>
   </div>
 </template>
 
 <script>
-import { dislikeArticle } from '@/api/article'
+import { dislikeArticle, reportArticle } from '@/api/article'
 import MoreAction from '@/views/home/components/more-action'
 import ArticleList from '@/views/home/components/article-list'
 import { getChannels } from '@/api/channels'
@@ -46,11 +47,40 @@ export default {
     }
   },
   methods: {
+    // 举报文章
+    // async reportArticle (type) {
+    //   try {
+    //     await reportArticle({
+    //       target: this.articleId, type
+    //     })
+    //     this.$notify({
+    //       type: 'success',
+    //       message: '操作成功'
+    //     })
+    //     // 触发删除文章事件,根据传入的文章id和激活频道的频道id
+    //     eventbus.$emit('delArticle', this.articleId, this.channels[this.activeIndex].id)
+    //     // 关闭弹层
+    //     this.showMoreAction = false
+    //   } catch (error) {
+    //     this.$notify({
+
+    //       message: '操作失败'
+
+    //     })
+    //   }
+    // },
     // 不敢兴趣
-    async dislike () {
+    // type参数为事件的操作类型,监听不喜欢或者举报事件传入的
+    // operateType是操作类型
+    // type是举报事件传入的参数
+    async dislikeOrReport (operateType, type) {
       try {
-        await dislikeArticle({
+        // 判断传入的操作类型的参数,然后调用不同的接口
+        operateType === 'dislike' ? await dislikeArticle({
           target: this.articleId
+        }) : await reportArticle({
+          target: this.articleId,
+          type
         })
         this.$notify({
           type: 'success',

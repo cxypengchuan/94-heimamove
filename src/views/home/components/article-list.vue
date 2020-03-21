@@ -40,6 +40,7 @@
 
 <script>
 import { getArticle } from '@/api/article'
+import eventbus from '@/utils/eventbus' // 公共事件处理器
 export default {
   data () {
     return {
@@ -49,6 +50,7 @@ export default {
       finished: false, // 表示 是否已经完成所有数据的加载
       articles: [], // 文章列表
       timestamp: null
+
     }
   },
   props: {
@@ -58,9 +60,28 @@ export default {
       default: null// 默认值
     }
   },
+  // 钩子函数,页面刷新执行
+  created () {
+    // 触发删除文章的事件,传入了文章ID和激活频道的id
+    eventbus.$on('delArticle', (artId, channelId) => {
+      // 判断传递过来的频道是否等于自身的频道,
+      if (channelId === this.channels_id) {
+        // 找到传递过来要删除文章的下标之后做删除操作
+        const index = this.articles.findIndex(item => item.art_id.toString() === artId)
+        if (index > -1) {
+          // 删除对应下标的文章
+          this.articles.splice(index, 1)
+        }
+        // 如果删除了当前文章列表的数据
+        if (this.articles.length === 0) {
+          // 则开启上拉加载,重新刷新数据
+          this.onLoad()
+        }
+      }
+    })
+  },
   methods: {
-    // 监听
-
+    // 上拉加载
     async onLoad () {
       // // 如果你有数据 你应该 把数据到加到list中
       // if (this.articles.length > 50) {

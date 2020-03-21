@@ -1,7 +1,7 @@
 <template>
   <div class="container">
       <!-- 放置tabs组件 -->
-      <van-tabs>
+      <van-tabs v-model="activeIndex">
          <!-- 内部需要放置子 标签  title值为当前显示的内容-->
          <!-- van-tab是vant组件的样式  -->
          <van-tab :title="item.name" v-for="item in channels" :key="item.id">
@@ -30,6 +30,7 @@ import { dislikeArticle } from '@/api/article'
 import MoreAction from '@/views/home/components/more-action'
 import ArticleList from '@/views/home/components/article-list'
 import { getChannels } from '@/api/channels'
+import eventbus from '@/utils/eventbus' // 公共事件处理器
 export default {
   name: 'home', // devtools查看组件时  可以看到 对应的name名称
   components: {
@@ -40,7 +41,8 @@ export default {
     return {
       channels: {},
       showMoreAction: false, // 弹层显示
-      articleId: null // 用来接收 点击的文章的id
+      articleId: null, // 用来接收 点击的文章的id
+      activeIndex: 0 // 当前默认激活的页面0
     }
   },
   methods: {
@@ -54,7 +56,10 @@ export default {
           type: 'success',
           message: '操作成功'
         })
-        // this.showMoreAction = true
+        // 触发删除文章事件,根据传入的文章id和激活频道的频道id
+        eventbus.$emit('delArticle', this.articleId, this.channels[this.activeIndex].id)
+        // 关闭弹层
+        this.showMoreAction = false
       } catch (error) {
         this.$notify({
 

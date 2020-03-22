@@ -26,7 +26,7 @@
          <!-- 放置弹层组件,我的频道 -->
          <van-action-sheet :round="false" v-model="showChannelEdit" title="编辑频道">
            <!-- 父组件传值给子组件channels是频道数据 -->
-           <ChannelEdit  @selectChannel="selectChannel" :channels='channels'></ChannelEdit>
+           <ChannelEdit :activeIndex='activeIndex' @selectChannel="selectChannel" :channels='channels'></ChannelEdit>
          </van-action-sheet>
   </div>
 </template>

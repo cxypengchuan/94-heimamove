@@ -21,11 +21,12 @@
     <div class="channel">
       <div class="tit">可选频道：</div>
       <van-grid class="van-hairline--left">
-        <van-grid-item v-for="channel in optionalChannels" :key="channel.id">
-          <span class="f12">{{channel.name}}</span>
-          <van-icon class="btn" name="plus"></van-icon>
+        <van-grid-item v-for="item in optionalChannels" :key="item.id">
+          <span class="f12">{{item.name}}</span>
+          <!-- 点击添加频道事件,传入一个频道 -->
+          <van-icon class="btn" name="plus" @click="$emit('addChannel', item)"></van-icon>
         </van-grid-item>
-      </van-grid>
+      </van-grid>item
     </div>
   </div>
 </template>

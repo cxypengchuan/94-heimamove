@@ -26,7 +26,7 @@
          <!-- 放置弹层组件,我的频道 -->
          <van-action-sheet :round="false" v-model="showChannelEdit" title="编辑频道">
            <!-- 父组件传值给子组件channels是频道数据 -->
-           <ChannelEdit :activeIndex='activeIndex' @selectChannel="selectChannel" :channels='channels'></ChannelEdit>
+           <ChannelEdit @delChannel='delChannel' :activeIndex='activeIndex' @selectChannel="selectChannel" :channels='channels'></ChannelEdit>
          </van-action-sheet>
   </div>
 </template>
@@ -36,7 +36,7 @@ import ChannelEdit from './components/channel-edit' // 引入编辑频道组件
 import { dislikeArticle, reportArticle } from '@/api/article'
 import MoreAction from '@/views/home/components/more-action'
 import ArticleList from '@/views/home/components/article-list'
-import { getChannels } from '@/api/channels'
+import { getChannels, delChannel } from '@/api/channels'
 import eventbus from '@/utils/eventbus' // 公共事件处理器
 export default {
   name: 'home', // devtools查看组件时  可以看到 对应的name名称
@@ -55,6 +55,23 @@ export default {
     }
   },
   methods: {
+    // 删除频道
+    async delChannel (id) {
+      try {
+        await delChannel(id)
+        // 找到对应的索引,然后删除,index是要删除的索引,activeIndex则是当前激活的索引
+        const index = this.channels.findIndex(item => item.id === id)
+        // 当前需要删除的索引判断是否在激活索引之前
+        if (index <= this.activeIndex) {
+          // 如果你要删除的索引时=是当前激活索引之前或者 等于 ,则当前激活索引要往前挪一格
+          this.activeIndex = this.activeIndex - 1
+        }
+        // 如果要删除的索引在激活索引之后,则直接删除
+        this.channels.splice(index, 1)
+      } catch (error) {
+        this.$notify({ message: '删除频道失败' })
+      }
+    },
     // 进入频道
     selectChannel (index) {
       this.activeIndex = index // 将对应频道的索引 设置给当前激活的 标签

@@ -13,7 +13,8 @@
           <span @click="$emit('selectChannel', index)" :class='{red: index==activeIndex}' class="f12">{{item.name}}</span>
           <!-- 叉号标签,点击编辑时显示 -->
           <!-- 因为第一个不允许删除,所有第一个永远不显示,要加一个判断,index下标为0时不显示 -->
-          <van-icon class="btn" name="cross" v-if="index!==0 && editing"></van-icon>
+           <!-- 点击叉号应该调用父组件的删除方法 传出当前要删除的id  -->
+          <van-icon @click="$emit('delChannel', item.id)" class="btn" name="cross" v-if="index!==0 && editing"></van-icon>
         </van-grid-item>
       </van-grid>
     </div>

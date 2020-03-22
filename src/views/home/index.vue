@@ -25,7 +25,8 @@
          </van-popup>
          <!-- 放置弹层组件,我的频道 -->
          <van-action-sheet :round="false" v-model="showChannelEdit" title="编辑频道">
-           <ChannelEdit></ChannelEdit>
+           <!-- 父组件传值给子组件channels是频道数据 -->
+           <ChannelEdit  @selectChannel="selectChannel" :channels='channels'></ChannelEdit>
          </van-action-sheet>
   </div>
 </template>
@@ -54,6 +55,11 @@ export default {
     }
   },
   methods: {
+    // 进入频道
+    selectChannel (index) {
+      this.activeIndex = index // 将对应频道的索引 设置给当前激活的 标签
+      this.showChannelEdit = false // 关闭弹层
+    },
     // 举报文章
     // async reportArticle (type) {
     //   try {

@@ -14,7 +14,7 @@
          </van-tab>
       </van-tabs>
       <!-- 在tabs下放置图标  编辑频道的图标 -->
-      <span class="bar_btn">
+      <span class="bar_btn" @click="showChannelEdit = true">
         <!-- 放入图标 vant图标 -->
          <van-icon name='wap-nav'></van-icon>
       </span>
@@ -23,10 +23,15 @@
            <!-- $event在H5中是事件对象,在自定义事件中是事件传出的第一个参数 -->
       <MoreAction @dislike="dislikeOrReport('dislike')" @report="dislikeOrReport('report',$event)" />
          </van-popup>
+         <!-- 放置弹层组件,我的频道 -->
+         <van-action-sheet :round="false" v-model="showChannelEdit" title="编辑频道">
+           <ChannelEdit></ChannelEdit>
+         </van-action-sheet>
   </div>
 </template>
 
 <script>
+import ChannelEdit from './components/channel-edit' // 引入编辑频道组件
 import { dislikeArticle, reportArticle } from '@/api/article'
 import MoreAction from '@/views/home/components/more-action'
 import ArticleList from '@/views/home/components/article-list'
@@ -36,14 +41,16 @@ export default {
   name: 'home', // devtools查看组件时  可以看到 对应的name名称
   components: {
     ArticleList,
-    MoreAction
+    MoreAction,
+    ChannelEdit
   },
   data () {
     return {
       channels: {},
       showMoreAction: false, // 弹层显示
       articleId: null, // 用来接收 点击的文章的id
-      activeIndex: 0 // 当前默认激活的页面0
+      activeIndex: 0, // 当前默认激活的页面0
+      showChannelEdit: false // 是否显示频道编辑组件  默认不显示
     }
   },
   methods: {

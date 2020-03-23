@@ -7,8 +7,8 @@
     <van-search @search="onSearch" v-model.trim="q" placeholder="请输入搜索关键词" shape="round" />
     <!-- 联想内容  有输入内容时 显示联想 -->
     <van-cell-group class="suggest-box" v-if="q">
-      <van-cell icon="search">
-        <span>j</span>ava
+      <van-cell icon="search" v-for="(item,index) in suggestList" :key="index">
+        {{item}}
       </van-cell>
     </van-cell-group>
     <!-- 历史记录部分  你搜索的内容 会在这里记录 -->
@@ -37,13 +37,35 @@
 </template>
 
 <script>
+import { getSuggestion } from '@/api/article' // 引入获取建议的接口
 const key = 'hm-94-toutiao-history' // 此key用来作为 历史记录在本地缓存中的key
 export default {
   name: 'search',
   data () {
     return {
       q: '', // 关键字的数据
-      historyList: JSON.parse(localStorage.getItem(key) || '["葡萄干","动漫","马云"]') // 作为一个数据变量 接收 搜索历史记录
+      historyList: JSON.parse(localStorage.getItem(key) || '["葡萄干","动漫","马云"]'), // 作为一个数据变量 接收 搜索历史记录
+      suggestList: []// 联想的搜索建议
+    }
+  },
+  watch: {
+    q () {
+      // 我们要在这个位置 去请求接口
+      clearTimeout(this.timer) // 先清除掉定时器
+      // 防抖函数
+      this.timer = setTimeout(async () => {
+        // 需要判断 当清空的时候 不能发送请求 但是要把联想的建议清空
+        if (!this.q) {
+          // 如果这时 搜索关键字没有内容
+          this.suggestList = []
+          // 不能再继续了
+          return
+        }
+        // 此函数中需要 请求 联想搜索的建议
+        // 联想搜索的建议 需要 放置在一个变量中
+        const data = await getSuggestion({ q: this.q })
+        this.suggestList = data.options // 将返回的词条的options赋值给 当前的联想建议
+      }, 300)
     }
   },
   methods: {

@@ -16,11 +16,14 @@
     <div class="history-box" v-else>
       <div class="head" v-if="historyList.length">
         <span>历史记录</span>
-        <van-icon name="delete"></van-icon>
+        <!-- 清空历史记录 -->
+        <van-icon @click="clear" name="delete"></van-icon>
       </div>
       <van-cell-group>
+        <!-- 前往历史记录的页面 -->
         <van-cell @click="toResult(item)" v-for="(item,index) in historyList" :key="index">
           <a class="word_btn">{{item}}</a>
+          <!-- 删除历史记录 -->
           <van-icon
             @click.stop="delHistory(index)"
             class="close_btn"
@@ -44,6 +47,23 @@ export default {
     }
   },
   methods: {
+    // 清空历史记录
+    async clear () {
+      // 直接清空历史记录
+      // 一般来说 删除所有内容之前
+      // 本身也支持promise
+      try {
+        await this.$dialog.confirm({
+          title: '提示',
+          message: '您确定要删除所有历史记录吗'
+        })
+        // 会执行下面的代码
+        this.historyList = [] // 将本地历史记录设置为空
+        localStorage.setItem(key, '[]') // 同步设置历史记录为空
+      } catch (error) {
+        // 失败不需要处理
+      }
+    },
     // 删除历史
     delHistory (index) {
       // 删除要先在data中删除数据 然后把data中的数据同步到 本地缓存中

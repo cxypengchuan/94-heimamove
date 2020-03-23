@@ -1,10 +1,10 @@
 <template>
   <div class="container">
     <!-- 搜索组件一级路由   返回上一个页面-->
-    <van-nav-bar left-arrow title="搜索中心" @click-left="$router.back()"></van-nav-bar>
+    <van-nav-bar  left-arrow title="搜索中心" @click-left="$router.back()"></van-nav-bar>
     <!-- 导航 -->
     <!-- 搜索组件 -->
-    <van-search v-model.trim="q" placeholder="请输入搜索关键词" shape="round" />
+    <van-search @search="onSearch" v-model.trim="q" placeholder="请输入搜索关键词" shape="round" />
     <!-- 联想内容  有输入内容时 显示联想 -->
     <van-cell-group class="suggest-box" v-if="q">
       <van-cell icon="search">
@@ -47,6 +47,17 @@ export default {
     }
   },
   methods: {
+    onSearch () {
+      // 首先判断的搜索内容为空 为空 直接返回
+      if (!this.q) return
+      // 应该在跳转之前 应该把搜索的结果 添加到历史记录
+      // 这里要去重 set
+      this.historyList.push(this.q) // 将搜索内容加入到历史记录
+      this.historyList = Array.from(new Set(this.historyList)) // 去重
+      localStorage.setItem(key, JSON.stringify(this.historyList)) // 设置到本地缓存
+      // 搜索事件触发的时候 应该跳到 搜索结果页 并且携带 参数
+      this.$router.push({ path: '/search/result', query: { q: this.q } })
+    },
     // 清空历史记录
     async clear () {
       // 直接清空历史记录

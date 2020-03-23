@@ -7,7 +7,8 @@
     <van-search @search="onSearch" v-model.trim="q" placeholder="请输入搜索关键词" shape="round" />
     <!-- 联想内容  有输入内容时 显示联想 -->
     <van-cell-group class="suggest-box" v-if="q">
-      <van-cell icon="search" v-for="(item,index) in suggestList" :key="index">
+      <!-- 点击搜索关键字进入页面 -->
+      <van-cell @click="toResult(item)" icon="search" v-for="(item,index) in suggestList" :key="index">
         {{item}}
       </van-cell>
     </van-cell-group>
@@ -104,7 +105,14 @@ export default {
       // 将数据同步到 本地缓存
       localStorage.setItem(key, JSON.stringify(this.historyList))
     },
+    // 点击历史记录和搜索建议进入搜索结果页面
+
     toResult (text) {
+      // 这里要去重 set
+      this.historyList.push(text) // 将搜索内容加入到历史记录
+      this.historyList = Array.from(new Set(this.historyList)) // 去重
+      localStorage.setItem(key, JSON.stringify(this.historyList)) // 设置到本地缓存
+      // 搜索事件触发的时候 应该跳到 搜索结果页 并且携带 参数
       this.$router.push({ path: '/search/result', query: { q: text } })
     }
   }

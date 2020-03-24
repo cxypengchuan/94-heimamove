@@ -5,7 +5,8 @@
     <van-pull-refresh v-model="downLoading" @refresh="onRefresh" :success-text="successText">
     <van-list finished-text="没有了" v-model="upLoading" :finished="finished" @load="onLoad">
         <van-cell-group>
-          <van-cell v-for="item in articles" :key="item.art_id.toString()">
+          <!-- 点击跳转文章详情页,传参ID -->
+          <van-cell :to="`/article?artId=${item.art_id.toString()}`" v-for="item in articles" :key="item.art_id.toString()">
             <!-- 放置元素 文章列表的循环项  无图  单图  三图 -->
             <div class="article_item">
               <!-- 标题 -->
@@ -26,7 +27,8 @@
                 <span>{{ item.aut_name }}</span>
                 <span>{{ item.comm_count }}</span>
                 <span>{{ item.pubdate | relTime }}</span>
-                <span @click="$emit('showAction', item.art_id.toString())" class="close" v-if="$store.state.user.token">
+                <!-- stop修饰符,阻止冒泡事件 -->
+                <span @click.stop="$emit('showAction', item.art_id.toString())" class="close" v-if="$store.state.user.token">
                   <van-icon name="cross" ></van-icon>
                 </span>
               </div>

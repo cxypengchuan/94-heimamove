@@ -5,7 +5,8 @@
      <van-nav-bar fixed="" title="搜索结果" left-arrow  @click-left="$router.back()"></van-nav-bar>
       <van-list v-model="upLoading" @load="onLoad" @finished='finished'>
         <van-cell-group>
-          <van-cell v-for="item in articles" :key="item.art_id.toString()">
+          <!-- 点击跳转到文章详情页,并传参id -->
+          <van-cell :to="`/article?artId=${item.art_id.toString()}`" v-for="item in articles" :key="item.art_id.toString()">
             <div class="article_item">
               <h3 class="van-ellipsis">{{item.title}}</h3>
               <div class="img_box" v-if="item.cover.type === 3">

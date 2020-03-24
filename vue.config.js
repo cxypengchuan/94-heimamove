@@ -12,7 +12,7 @@ module.exports = {
         // modifyVars 是less-loader的一个选项 通过这个选项可以改变 变量的值
         modifyVars: {
           // 直接覆盖变量  变量名不需要@
-          blue: '#ccc'
+          blue: '#3296fa'
 
           // 或者可以通过 less 文件覆盖（文件路径为绝对路径）
         }

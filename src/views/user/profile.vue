@@ -1,6 +1,6 @@
 <template>
      <div class="container">
-    <van-nav-bar left-arrow @click-left="$router.back()" title="编辑资料" right-text="保存" ></van-nav-bar>
+    <van-nav-bar left-arrow @click-left="$router.back()" title="编辑资料" right-text="保存" @click-right='saveUser' ></van-nav-bar>
     <van-cell-group>
       <van-cell is-link title="头像"  center>
         <van-image
@@ -22,6 +22,7 @@
       <!-- 内容 -->
       <!-- 1 本地相册选择图片 -->
       <!-- 2 拍照 -->
+      <!-- 点击本地相册打开上传文件组件 -->
        <van-cell @click="openFileDialog" is-link title="本地相册选择图片"></van-cell>
        <van-cell is-link title="拍照"></van-cell>
     </van-popup>
@@ -55,7 +56,7 @@
 
 <script>
 import dayjs from 'dayjs'
-import { getUserProfile, updatePhoto } from '@/api/user'
+import { getUserProfile, updatePhoto, saveUserInfo } from '@/api/user'
 export default {
   data () {
     return {
@@ -78,6 +79,15 @@ export default {
     }
   },
   methods: {
+    // 保存用户信息
+    async saveUser () {
+      try {
+        await saveUserInfo(this.user) // 传入user对象
+        this.$pnotify({ type: 'success', message: '保存成功' })
+      } catch (error) {
+        this.$pnotify({ message: '保存失败' })
+      }
+    },
     // 修改头像
     async  upload (params) {
       //  当选择 完头像之后 就可以修改头像

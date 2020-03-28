@@ -23,7 +23,7 @@
           <p>粉丝</p>
         </van-col>
       </van-row>
-    </div>``
+    </div>
     <van-row class="user-links">
       <van-col span="8">
         <van-icon name="newspaper-o" color="#7af" />我的作品
@@ -42,6 +42,7 @@
       <van-cell icon="setting-o" title="系统设置" is-link />
       <van-cell icon="warning-o" @click="lgout" title="退出登录"  is-link />
     </van-cell-group>
+
   </div>
 </template>
 
@@ -52,6 +53,7 @@ export default {
   data () {
     return {
       userInfo: {}
+
     }
   },
   methods: {

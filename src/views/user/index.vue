@@ -57,10 +57,11 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['delUser']),
+    ...mapMutations(['delUser', 'updatePhoto']),
     // 获取用户的个人信息
     async getUserInfo () {
       this.userInfo = await getUserInfo()
+      this.updatePhoto({ photo: this.userInfo.photo }) // 调用mutation来设置头像
     },
     // 登出操作
     async lgout () {

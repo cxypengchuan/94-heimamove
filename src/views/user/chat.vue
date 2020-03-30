@@ -113,6 +113,13 @@ export default {
       this.scrollBottom() // 接消息之后
     })
   },
+
+  // 实例销毁前
+  beforeDestroy () {
+    // 需要在实例销毁之前  把websocket连接给关掉
+    // ws.close() 原生    socket.io  close()
+    this.socket.close() // 直接关闭连接
+  },
   computed: {
     ...mapState(['photo', 'user']) // 头像地址 当前用户的头像地址
   }
